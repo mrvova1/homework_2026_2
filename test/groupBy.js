@@ -47,4 +47,52 @@ QUnit.module('Тестируем функцию groupBy', () => {
             ]
         }, 'Все объекты должны быть сгруппированы под одним значением');
     });
+
+    QUnit.test('Сохраняет объекты в исходном порядке внутри групп', (assert) => {
+        const data = [
+            { id: 1, category: 'fruit' },
+            { id: 2, category: 'vegetable' },
+            { id: 3, category: 'fruit' },
+            { id: 4, category: 'vegetable' },
+            { id: 5, category: 'fruit' }
+        ];
+        const result = groupBy(data, 'category');
+
+        assert.deepEqual(result, {
+            fruit: [
+                { id: 1, category: 'fruit' },
+                { id: 3, category: 'fruit' },
+                { id: 5, category: 'fruit' }
+            ],
+            vegetable: [
+                { id: 2, category: 'vegetable' },
+                { id: 4, category: 'vegetable' }
+            ]
+        }, 'Порядок объектов внутри каждой группы должен сохраняться');
+    });
+
+    QUnit.test('Работает правильно с различными типами значений ключа', (assert) => {
+        const data = [
+            { id: 1, category: 'fruit' },
+            { id: 2, category: 42 },
+            { id: 3, category: 'fruit' },
+            { id: 4, category: true },
+            { id: 5, category: 42 }
+        ];
+        const result = groupBy(data, 'category');
+
+        assert.deepEqual(result, {
+            fruit: [
+                { id: 1, category: 'fruit' },
+                { id: 3, category: 'fruit' }
+            ],
+            42: [
+                { id: 2, category: 42 },
+                { id: 5, category: 42 }
+            ],
+            true: [
+                { id: 4, category: true }
+            ]
+        }, 'Объекты должны быть сгруппированы по значению ключа различных типов');
+    });
 });
