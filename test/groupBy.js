@@ -48,27 +48,89 @@ QUnit.module('Тестируем функцию groupBy', () => {
         }, 'Все объекты должны быть сгруппированы под одним значением');
     });
 
-    QUnit.test('Сохраняет объекты в исходном порядке внутри групп', (assert) => {
+    QUnit.test('Бросает TypeError, если первый аргумент не массив', (assert) => {
+        assert.throws(
+            () => groupBy(null, 'category'),
+            /Первый аргумент должен быть массивом/,
+            'null вместо массива'
+        );
+
+        assert.throws(
+            () => groupBy(undefined, 'category'),
+            /Первый аргумент должен быть массивом/,
+            'undefined вместо массива'
+        );
+
+        assert.throws(
+            () => groupBy('abc', 'category'),
+            /Первый аргумент должен быть массивом/,
+            'Строка вместо массива'
+        );
+
+        assert.throws(
+            () => groupBy(42, 'category'),
+            /Первый аргумент должен быть массивом/,
+            'Число вместо массива'
+        );
+
+        assert.throws(
+            () => groupBy({}, 'category'),
+            /Первый аргумент должен быть массивом/,
+            'Объект вместо массива'
+        );
+    });
+
+    QUnit.test('Бросает TypeError, если элементы массива не объекты', (assert) => {
+        assert.throws(
+            () => groupBy([1, 2, 3], 'category'),
+            /Все элементы массива должны быть объектами/,
+            'Примитивы внутри массива'
+        );
+
+        assert.throws(
+            () => groupBy([null], 'category'),
+            /Все элементы массива должны быть объектами/,
+            'null внутри массива'
+        );
+    });
+
+    QUnit.test('Бросает TypeError, если ключ не является непустой строкой', (assert) => {
+        assert.throws(
+            () => groupBy([], ''),
+            /Второй аргумент должен быть непустой строкой/,
+            'Пустая строка вместо ключа'
+        );
+
+        assert.throws(
+            () => groupBy([], 42),
+            /Второй аргумент должен быть непустой строкой/,
+            'Число вместо ключа'
+        );
+
+        assert.throws(
+            () => groupBy([], null),
+            /Второй аргумент должен быть непустой строкой/,
+            'null вместо ключа'
+        );
+    });
+
+    QUnit.test('Работает правильно, если у некоторых объектов отсутствует ключ', (assert) => {
         const data = [
             { id: 1, category: 'fruit' },
-            { id: 2, category: 'vegetable' },
-            { id: 3, category: 'fruit' },
-            { id: 4, category: 'vegetable' },
-            { id: 5, category: 'fruit' }
+            { id: 2 }, 
+            { id: 3, category: 'fruit' }
         ];
         const result = groupBy(data, 'category');
 
         assert.deepEqual(result, {
             fruit: [
                 { id: 1, category: 'fruit' },
-                { id: 3, category: 'fruit' },
-                { id: 5, category: 'fruit' }
+                { id: 3, category: 'fruit' }
             ],
-            vegetable: [
-                { id: 2, category: 'vegetable' },
-                { id: 4, category: 'vegetable' }
+            undefined: [
+                { id: 2 }
             ]
-        }, 'Порядок объектов внутри каждой группы должен сохраняться');
+        }, 'Объекты без указанного ключа должны попадать в группу undefined');
     });
 
     QUnit.test('Работает правильно с различными типами значений ключа', (assert) => {

@@ -7,7 +7,31 @@
  * @example
  * // returns { 'A': [{ id: 1, category: 'A' }], 'B': [{ id: 2, category: 'B' }] }
  * groupBy([{ id: 1, category: 'A' }, { id: 2, category: 'B' }], 'category');
- * @returns {Object}
+ * @returns {Object.<string, Array<Object>>} объект с группами
+ * @throws {TypeError} если аргументы имеют неправильный тип
  */
+const groupBy = (array, key) => {
+    if (!Array.isArray(array)) {
+        throw new TypeError('Первый аргумент должен быть массивом');
+    }
 
-const groupBy = (array, key) => Object.groupBy(array, item => item[key]);
+    if (typeof key !== 'string' || key.length === 0) {
+        throw new TypeError('Второй аргумент должен быть непустой строкой');
+    }
+
+    if (array.some(item => item === null || typeof item !== 'object')) {
+        throw new TypeError('Все элементы массива должны быть объектами');
+    }
+
+    return array.reduce((groups, item) => {
+        const groupKey = item[key];
+
+        if (!Object.prototype.hasOwnProperty.call(groups, groupKey)) {
+            groups[groupKey] = [];
+        }
+
+        groups[groupKey].push(item);
+
+        return groups;
+    }, {});
+};
