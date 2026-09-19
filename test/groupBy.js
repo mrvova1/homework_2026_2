@@ -117,7 +117,7 @@ QUnit.module('Тестируем функцию groupBy', () => {
     QUnit.test('Работает правильно, если у некоторых объектов отсутствует ключ', (assert) => {
         const data = [
             { id: 1, category: 'fruit' },
-            { id: 2 }, 
+            { id: 2 },
             { id: 3, category: 'fruit' }
         ];
         const result = groupBy(data, 'category');
@@ -139,7 +139,15 @@ QUnit.module('Тестируем функцию groupBy', () => {
             { id: 2, category: 42 },
             { id: 3, category: 'fruit' },
             { id: 4, category: true },
-            { id: 5, category: 42 }
+            { id: 5, category: 42 },
+            { id: 6, category: null },
+            { id: 7, category: {} },
+            { id: 8, category: 'null' },
+            { id: 9, category: undefined },
+            { id: 10 },
+            { id: 11, category: NaN },
+
+
         ];
         const result = groupBy(data, 'category');
 
@@ -154,6 +162,20 @@ QUnit.module('Тестируем функцию groupBy', () => {
             ],
             true: [
                 { id: 4, category: true }
+            ],
+            null: [
+                { id: 6, category: null },
+                { id: 8, category: 'null' }
+            ],
+            '[object Object]': [
+                { id: 7, category: {} }
+            ],
+            undefined: [
+                { id: 9, category: undefined },
+                { id: 10 }
+            ],
+            NaN: [
+                { id: 11, category: NaN }
             ]
         }, 'Объекты должны быть сгруппированы по значению ключа различных типов');
     });
