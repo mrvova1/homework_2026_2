@@ -19,7 +19,7 @@ const groupBy = (array, key) => {
         throw new TypeError('Второй аргумент должен быть непустой строкой');
     }
 
-    if (array.some(item => item === null || typeof item !== 'object')) {
+    if (array.some(item => Object.prototype.toString.call(item) !== '[object Object]')) {
         throw new TypeError('Все элементы массива должны быть объектами');
     }
 
